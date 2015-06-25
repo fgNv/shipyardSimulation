@@ -3,7 +3,6 @@ package agents
 import domain.AgentType
 import domain.AgentType.AgentType
 import jade.core.Agent
-import jade.core.behaviours.TickerBehaviour
 import object_graph.CompositionRoot
 
 /**
@@ -31,10 +30,11 @@ class InitializerAgent extends Agent {
   }
 
   override def setup(): Unit = {
-    AgentType.values.foreach(u => createAgents(u))
+    //AgentType.values.foreach(u => createAgents(u))
 
+    /*
     addBehaviour(new TickerBehaviour(this,configs.steelSheetCreationInterval) {
       override def onTick(): Unit = ???
-    })
+    })*/
   }
 }
