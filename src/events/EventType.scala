@@ -17,5 +17,11 @@ object EventType extends Enumeration  {
   CutSectorAncillaryActive,
   CNCCutMachineActive,
   FitterActive,
-  WelderActive = Value
+  WelderActive ,
+  CNCOperatorCreated,
+  CutSectorAncillaryCreated,
+  CNCCutMachineCreated,
+  FitterCreated,
+  TransportWorkerCreated,
+  WelderCreated= Value
 }
