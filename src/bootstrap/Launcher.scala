@@ -28,10 +28,6 @@ object Launcher {
       :+ "-gui"
       :+ agents)
 
-
-    //Application.launch(classOf[MainView], args: _*)
-    //jade.Boot.main(newArgs)
-
     initTask(() => Application.launch(classOf[MainView], args: _*))
     initTask(() => jade.Boot.main(newArgs))
   }
