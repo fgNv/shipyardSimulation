@@ -6,8 +6,9 @@ import domain.AgentType.AgentType
 /**
  * Created by Felipe on 19/06/2015.
  */
-class CNCCutMachineAgent extends AbstractAgent() {
+class CNCCutMachineAgent extends AbstractResourceAgent() {
   override def getAgentType(): AgentType = {
     AgentType.CNCCutMachineAgent
   }
+
 }

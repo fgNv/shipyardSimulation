@@ -1,6 +1,6 @@
 package object_graph
 
-import agents.AbstractAgent
+import agents.AbstractResourceAgent
 import scala.collection.mutable.ListBuffer
 
 /**
@@ -8,7 +8,7 @@ import scala.collection.mutable.ListBuffer
  */
 object CompositionRoot {
 
-  val agents = new ListBuffer[AbstractAgent]
+  val agents = new ListBuffer[AbstractResourceAgent]
   val configurationDataFactory = ConfigurationDataFactory
   val timer = new infrastructure.Timer()
 

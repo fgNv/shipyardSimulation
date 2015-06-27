@@ -6,7 +6,7 @@ import domain.AgentType.AgentType
 /**
  * Created by Felipe on 19/06/2015.
  */
-class FitterAgent extends AbstractAgent(){
+class FitterAgent extends AbstractResourceAgent(){
   override def getAgentType(): AgentType = {
     AgentType.FitterAgent
   }

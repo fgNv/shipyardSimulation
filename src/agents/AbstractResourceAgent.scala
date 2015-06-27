@@ -3,6 +3,7 @@ package agents
 import domain.AgentType.AgentType
 import domain.ResourceState.ResourceState
 import domain.{ActivityLogItem, ResourceState}
+import events.{EventType, EventDispatcher}
 import jade.core.Agent
 import object_graph.CompositionRoot
 
@@ -11,7 +12,7 @@ import scala.collection.mutable.ListBuffer
 /**
  * Created by Felipe on 19/06/2015.
  */
-abstract class AbstractAgent extends Agent() {
+abstract class AbstractResourceAgent extends Agent() {
   def logEntries = new ListBuffer[ActivityLogItem]
 
   def getResourceState() : ResourceState ={
@@ -21,6 +22,7 @@ abstract class AbstractAgent extends Agent() {
   override def setup() {
     logEntries.append(new ActivityLogItem(0, ResourceState.Idle))
     CompositionRoot.agents.append(this)
+    EventDispatcher.Dispatch(EventType.CNCCutMachineIdle)
   }
 
   def getAgentType(): AgentType

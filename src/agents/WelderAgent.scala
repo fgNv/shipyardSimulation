@@ -6,7 +6,7 @@ import domain.AgentType.AgentType
 /**
  * Created by Felipe on 19/06/2015.
  */
-class WelderAgent extends AbstractAgent(){
+class WelderAgent extends AbstractResourceAgent(){
   override def getAgentType(): AgentType = {
     AgentType.WelderAgent
   }

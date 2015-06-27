@@ -1,21 +1,38 @@
 package bootstrap
 
+import javafx.application.Application
+
+import domain.AgentModule
+import object_graph.CompositionRoot
+import view.MainView
+
 /**
  * Created by Felipe on 19/06/2015.
  */
 object Launcher {
-  def main(args : Array[String]){
 
-/*    val agents = ( "TransportWorkerAgent:agents.TransportWorkerAgent;" +
-                   "CNCOperatorAgent:agents.CNCOperatorAgent;" +
-                   "CutSectorAncillaryAgent:agents.CutSectorAncillaryAgent;" +
-                   "CNCCutMachineAgent:agents.CNCCutMachineAgent;" +
-                   "FitterAgent:agents.FitterAgent;" +
-                   "WelderAgent:agents.WelderAgent")*/
+  def initTask(task : () => Unit) : Unit ={
+    val runnable = new Runnable {
+      override def run(): Unit = {
+        task()
+      }
+    }
+    val thread = new Thread(runnable)
+    thread.start()
+  }
 
-      val newArgs = (args :+ "-gui"
-                          :+ "initAgent:agents.InitializerAgent")
+  def main(args: Array[String]) {
 
-      jade.Boot.main(newArgs)
+    val agents = AgentModule.buildAgentsCreationString(CompositionRoot.configurationDataFactory.getConfigurationData())
+    val newArgs = (args
+      :+ "-gui"
+      :+ agents)
+
+
+    //Application.launch(classOf[MainView], args: _*)
+    //jade.Boot.main(newArgs)
+
+    initTask(() => Application.launch(classOf[MainView], args: _*))
+    initTask(() => jade.Boot.main(newArgs))
   }
 }
