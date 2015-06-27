@@ -12,7 +12,7 @@ class MainView extends Application {
   println("Test()")
 
   override def start(primaryStage: Stage) {
-    primaryStage.setTitle("Simulação de estaleiro!")
+    primaryStage.setTitle("Simulacao de estaleiro!")
     val resource = getClass.getResource("main_view.fxml")
     val root: Parent = FXMLLoader.load(resource)
 
