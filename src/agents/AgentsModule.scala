@@ -1,6 +1,7 @@
 package agents
 
-import domain.AgentType
+import domain.{ResourceState, AgentType}
+import domain.AgentType.AgentType
 
 import scala.collection.mutable.ListBuffer
 
@@ -11,7 +12,11 @@ object AgentsModule {
 
   var agents = new ListBuffer[AbstractResourceAgent]
 
-  def getCUTMachineWithAvailability = {
+  def getIdleAgent(agentType : AgentType) : Option[AbstractResourceAgent] = {
+    agents.find(a => a.getAgentType() == agentType && a.getResourceState() == ResourceState.Idle)
+  }
+
+  def getCUTMachineWithAvailability() = {
     AgentsModule.agents
       .filter(a => a.getAgentType() == AgentType.CNCCutMachineAgent)
       .map(a => a.asInstanceOf[CNCCutMachineAgent])

@@ -1,8 +1,8 @@
 package agents
 
+import domain.AgentType
 import domain.product.SteelSheet
-import domain.{AgentType, ResourceState}
-import events.{EventType, EventDispatcher}
+import events.{EventDispatcher, EventType}
 import jade.core.Agent
 import jade.core.behaviours.{CyclicBehaviour, TickerBehaviour}
 import object_graph.CompositionRoot
@@ -33,10 +33,7 @@ class DeliveryAgent extends Agent {
         if (steelSheets.length == 0)
           return
 
-        val idleTransportWorker = (u: AbstractResourceAgent) =>
-          u.getResourceState() == ResourceState.Idle && u.getAgentType() == AgentType.TransportWorkerAgent
-
-        val idleTransportAgent = AgentsModule.agents.find(idleTransportWorker)
+        val idleTransportAgent = AgentsModule.getIdleAgent(AgentType.TransportWorkerAgent)
         idleTransportAgent match {
           case Some(transportAgent) => MessageModule.send(myAgent, transportAgent, "newSteelSheet")
           case None => return

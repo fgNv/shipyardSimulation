@@ -36,5 +36,4 @@ class MainController extends Initializable {
       label_steelSheetsWaitingTransport.setText(steelSheetsWaitingTransport.toString)
     })
   }
-
 }
