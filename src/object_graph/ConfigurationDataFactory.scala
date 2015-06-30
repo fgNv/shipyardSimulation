@@ -7,12 +7,12 @@ import domain.ConfigurationData
  */
 object ConfigurationDataFactory {
   def getConfigurationData() = {
-    val transportTimeToCNC = 5
+    val transportTimeToCNC = 5000
     val cutTime = 10
     val partsFromSheet = 20
     val timeForMaterialMovingInCNC = 50
     val cncQueueCapacity = 15
-    val steelSheetCreationInterval = 10
+    val steelSheetCreationInterval = 1000
     val partsForPartialBlock = 5
     val partialBlocksForBlock = 5
     val blocksForHull = 5
@@ -29,7 +29,7 @@ object ConfigurationDataFactory {
     val fittersNeededInEdification = 5
     val weldersNeededInEdification = 5
 
-    val transportWorkerAgentQuantity = 6
+    val transportWorkerAgentQuantity = 3
     val cNCOperatorAgentQuantity = 6
     val cutSectorAncillaryAgentQuantity = 6
     val cNCCutMachineAgentQuantity = 6

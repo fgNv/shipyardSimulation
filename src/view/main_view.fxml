@@ -1,24 +1,31 @@
 <?import javafx.scene.layout.GridPane?>
 <?import view.components.*?>
+<?import javafx.scene.control.Label?>
 <GridPane fx:controller="view.MainController"
           xmlns:fx="http://javafx.com/fxml" alignment="center" hgap="10" vgap="10">
 
-    <IdleCNCOperatorComponent GridPane.columnIndex="0" GridPane.rowIndex="0">
-    </IdleCNCOperatorComponent>
+    <Label text="Total de chapas de aço entregues" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+    <Label fx:id="label_steelSheetsDelivered" text="" GridPane.columnIndex="0" GridPane.rowIndex="1" />
 
-    <IdleCutSectorAncillaryComponent GridPane.columnIndex="1" GridPane.rowIndex="0">
-    </IdleCutSectorAncillaryComponent>
+    <Label text="Chapas de aço aguardando transporte" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+    <Label fx:id="label_steelSheetsWaitingTransport" text="" GridPane.columnIndex="1" GridPane.rowIndex="1" />
 
-    <IdleCNCOperatorComponent GridPane.columnIndex="2" GridPane.rowIndex="0">
-    </IdleCNCOperatorComponent>
-
-    <IdleFitterComponent GridPane.columnIndex="3" GridPane.rowIndex="0">
-    </IdleFitterComponent>
-
-    <IdleTransportWorkerComponent GridPane.columnIndex="4" GridPane.rowIndex="0">
+    <IdleTransportWorkerComponent GridPane.columnIndex="0" GridPane.rowIndex="2">
     </IdleTransportWorkerComponent>
 
-    <IdleWelderComponent GridPane.columnIndex="5" GridPane.rowIndex="0">
+    <IdleCutSectorAncillaryComponent GridPane.columnIndex="1" GridPane.rowIndex="2">
+    </IdleCutSectorAncillaryComponent>
+
+    <IdleCNCCutMachineComponent GridPane.columnIndex="2" GridPane.rowIndex="2">
+    </IdleCNCCutMachineComponent>
+
+    <IdleCNCOperatorComponent GridPane.columnIndex="3" GridPane.rowIndex="2">
+    </IdleCNCOperatorComponent>
+
+    <IdleFitterComponent GridPane.columnIndex="4" GridPane.rowIndex="2">
+    </IdleFitterComponent>
+
+    <IdleWelderComponent GridPane.columnIndex="5" GridPane.rowIndex="2">
     </IdleWelderComponent>
 
 </GridPane>

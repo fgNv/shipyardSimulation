@@ -23,7 +23,8 @@ object Launcher {
 
   def main(args: Array[String]) {
 
-    val agents = AgentModule.buildAgentsCreationString(CompositionRoot.configurationDataFactory.getConfigurationData())
+    val agents = (AgentModule.buildAgentsCreationString(CompositionRoot.configurationDataFactory.getConfigurationData())
+                  + "deliveryAgent:agents.DeliveryAgent")
     val newArgs = (args
       :+ "-gui"
       :+ agents)

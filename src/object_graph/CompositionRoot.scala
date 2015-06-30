@@ -8,7 +8,6 @@ import scala.collection.mutable.ListBuffer
  */
 object CompositionRoot {
 
-  val agents = new ListBuffer[AbstractResourceAgent]
   val configurationDataFactory = ConfigurationDataFactory
   val timer = new infrastructure.Timer()
 

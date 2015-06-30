@@ -9,10 +9,9 @@ import javafx.application.Application
  * Created by Felipe on 26/06/2015.
  */
 class MainView extends Application {
-  println("Test()")
 
   override def start(primaryStage: Stage) {
-    primaryStage.setTitle("Simulacao de estaleiro!")
+    primaryStage.setTitle("Simulacao de estaleiro")
     val resource = getClass.getResource("main_view.fxml")
     val root: Parent = FXMLLoader.load(resource)
 

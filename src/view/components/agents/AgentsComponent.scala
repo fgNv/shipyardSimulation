@@ -5,14 +5,14 @@ import javafx.scene.layout.VBox
 
 import events.EventType
 import events.EventType.EventType
-import view.components.idleAgents.IdleAgentsComponentController
+import view.components.agents.AgentsComponentController
 
 /**
  * Created by Felipe on 27/06/2015.
  */
 abstract class IdleAgentsComponent extends VBox {
 
-  val root = new FXMLLoader(getClass().getResource("/view/components/idleAgents/idle_agents_component.fxml"))
+  val root = new FXMLLoader(getClass().getResource("/view/components/agents/agents_component.fxml"))
   root.setRoot(this)
 
   def createdEventType: EventType
@@ -21,9 +21,11 @@ abstract class IdleAgentsComponent extends VBox {
 
   def activeEventType: EventType
 
-  def titleText: String
+  def idleTitleText: String
 
-  var controller = new IdleAgentsComponentController(titleText, createdEventType, idleEventType, activeEventType)
+  def activeTitleText : String
+
+  var controller = new AgentsComponentController(idleTitleText,activeTitleText, createdEventType, idleEventType, activeEventType)
   root.setController(controller)
   root.load()
 }
@@ -35,7 +37,9 @@ class IdleCNCOperatorComponent extends IdleAgentsComponent {
 
   override def activeEventType = EventType.CNCOperatorActive
 
-  override def titleText = "Operadores de CNC ociosos"
+  override def idleTitleText = "Operadores de CNC ociosos"
+
+  override def activeTitleText = "Operadores de CNC trabalhando"
 }
 
 class IdleCutSectorAncillaryComponent extends IdleAgentsComponent {
@@ -45,7 +49,8 @@ class IdleCutSectorAncillaryComponent extends IdleAgentsComponent {
 
   override def activeEventType = EventType.CutSectorAncillaryActive
 
-  override def titleText = "Auxiliares do setor de corte ociosos"
+  override def idleTitleText = "Auxiliares do setor de corte ociosos"
+  override def activeTitleText = "Auxiliares do setor de corte trabalhado"
 }
 
 class IdleCNCCutMachineComponent extends IdleAgentsComponent {
@@ -55,7 +60,8 @@ class IdleCNCCutMachineComponent extends IdleAgentsComponent {
 
   override def activeEventType = EventType.CNCCutMachineActive
 
-  override def titleText = "Maquinas de corte ociosas"
+  override def idleTitleText = "Maquinas de corte ociosas"
+  override def activeTitleText = "Maquinas de corte trabalhando"
 }
 
 class IdleFitterComponent extends IdleAgentsComponent {
@@ -65,7 +71,8 @@ class IdleFitterComponent extends IdleAgentsComponent {
 
   override def activeEventType = EventType.FitterActive
 
-  override def titleText = "Montadores ociosos"
+  override def idleTitleText = "Montadores ociosos"
+  override def activeTitleText = "Montadores trabalhando"
 }
 
 class IdleWelderComponent extends IdleAgentsComponent {
@@ -75,7 +82,8 @@ class IdleWelderComponent extends IdleAgentsComponent {
 
   override def activeEventType = EventType.WelderActive
 
-  override def titleText = "Soldadores ociosos"
+  override def idleTitleText = "Soldadores ociosos"
+  override def activeTitleText = "Soldadores trabalhando"
 }
 
 class IdleTransportWorkerComponent extends IdleAgentsComponent {
@@ -85,5 +93,6 @@ class IdleTransportWorkerComponent extends IdleAgentsComponent {
 
   override def activeEventType = EventType.TransportWorkerActive
 
-  override def titleText = "Trabalhadores do transporte ociosos"
+  override def idleTitleText = "Trabalhadores do transporte ociosos"
+  override def activeTitleText = "Trabalhadores do transporte trabalhando"
 }

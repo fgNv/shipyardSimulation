@@ -6,6 +6,7 @@ package events
 object EventType extends Enumeration  {
   type EventType = Value
   val SteelSheetCreated,
+  SteelSheetTransported,
   TransportWorkerIdle,
   TransportWorkerActive,
   CNCOperatorIdle,

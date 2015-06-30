@@ -5,7 +5,7 @@ import domain.AgentType.AgentType
 /**
  * Created by Felipe on 19/06/2015.
  */
-class ConfigurationData(_transportTimeToCNC: Double,
+class ConfigurationData(_transportTimeToCNC: Long,
                         _cutTime: Double,
                         _partsFromSheet: Double,
                         _timeForMaterialMovingInCNC: Double,
