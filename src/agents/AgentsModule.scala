@@ -4,6 +4,7 @@ import domain.{ResourceState, AgentType}
 import domain.AgentType.AgentType
 import jade.core.Agent
 import jade.core.behaviours.{TickerBehaviour, CyclicBehaviour}
+import object_graph.CompositionRoot
 
 import scala.collection.mutable.ListBuffer
 
@@ -13,6 +14,8 @@ import scala.collection.mutable.ListBuffer
 object AgentsModule {
 
   var agents = new ListBuffer[AbstractResourceAgent]
+
+  val configuration = CompositionRoot.configurationDataFactory.getConfigurationData()
 
   def getIdleAgent(agentType: AgentType): Option[AbstractResourceAgent] = {
     agents.find(a => a.getAgentType() == agentType && a.getResourceState() == ResourceState.Idle)
@@ -32,6 +35,18 @@ object AgentsModule {
         behaviourAction()
       }
     })
+  }
+
+  def getFittersForPartialMounting(): Option[ListBuffer[FitterAgent]] = {
+    val agents = AgentsModule.agents
+                  .filter(a => a.getAgentType() == AgentType.FitterAgent && a.getResourceState() == ResourceState.Idle)
+                  .take(configuration.fittersNeededInPartialFitting)
+                  .map(a => asInstanceOf[FitterAgent])
+
+    if(agents.length == configuration.fittersNeededInPartialFitting)
+      return Some(agents)
+
+    None
   }
 
   def getCUTMachineWithAvailability() = {

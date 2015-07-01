@@ -1,7 +1,7 @@
 package agents
 
 import domain.AgentType
-import domain.product.SteelSheet
+import domain.product.{ProcessedPart, SteelSheet}
 import events.{EventDispatcher, EventType}
 import jade.core.Agent
 import object_graph.CompositionRoot
@@ -15,7 +15,8 @@ class DeliveryAgent extends Agent {
 
   val configs = CompositionRoot.configurationDataFactory.getConfigurationData()
 
-  var steelSheets = new ListBuffer[SteelSheet]
+  private val steelSheets = new ListBuffer[SteelSheet]
+  private val parts = new ListBuffer[ProcessedPart]
 
   private def addSteelSheetCreationBehaviour() = {
     AgentsModule.addTickerBehaviour(this, configs.steelSheetCreationInterval, () => {
@@ -43,10 +44,33 @@ class DeliveryAgent extends Agent {
     })
   }
 
+  private def addReceivePiecesDoneNotificationBehaviour(): Unit = {
+    MessageModule.receive(this, "partsFromSheetProduced", (m) => {
+      (0 until configs.partsFromSheet).foreach(u => {
+        EventDispatcher.Dispatch(EventType.PartProduced)
+        parts.append(new ProcessedPart)
+      })
+    })
+  }
+
+  private def addDispatchPartialMountingBehaviour(): Unit = {
+    AgentsModule.addCyclicBehaviour(this, () => {
+      if (parts.length >= configs.partsForPartialBlock) {
+        val agents = AgentsModule.getFittersForPartialMounting()
+        agents match {
+          case Some(fitters) => fitters.foreach(a => MessageModule.send(this, a, "CallingForPartialFitting"))
+          case None => ()
+        }
+      }
+    })
+  }
+
   override def setup(): Unit = {
     super.setup()
     addSteelSheetCreationBehaviour()
     addSendSteelSheetToTransportWorkerBehaviour()
     addSteelSheetDeliveredConfirmationBehaviour()
+    addReceivePiecesDoneNotificationBehaviour()
+    addDispatchPartialMountingBehaviour()
   }
 }

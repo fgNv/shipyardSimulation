@@ -91,6 +91,7 @@ class CNCCutMachineAgent extends AbstractResourceAgent() {
     MessageModule.receive(this, "partsMovedFromCNC", (m) => {
       hasPiecesToBeMoved = false
       changeToIdle()
+      MessageModule.send(this, "deliveryAgent", "partsFromSheetProduced")
     })
   }
 

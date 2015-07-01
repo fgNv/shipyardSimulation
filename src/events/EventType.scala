@@ -10,6 +10,7 @@ object EventType extends Enumeration  {
   TransportWorkerIdle,
   SteelSheetAddedToCNCQueue,
   SteelSheetMovedFromCNCQueueToProcess,
+  PartProduced,
   TransportWorkerActive,
   CNCOperatorIdle,
   CutSectorAncillaryIdle,
