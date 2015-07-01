@@ -8,6 +8,8 @@ object EventType extends Enumeration  {
   val SteelSheetCreated,
   SteelSheetTransported,
   TransportWorkerIdle,
+  SteelSheetAddedToCNCQueue,
+  SteelSheetMovedFromCNCQueueToProcess,
   TransportWorkerActive,
   CNCOperatorIdle,
   CutSectorAncillaryIdle,

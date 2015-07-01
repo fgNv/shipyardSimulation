@@ -16,16 +16,19 @@
     <IdleCutSectorAncillaryComponent GridPane.columnIndex="1" GridPane.rowIndex="2">
     </IdleCutSectorAncillaryComponent>
 
-    <IdleCNCCutMachineComponent GridPane.columnIndex="2" GridPane.rowIndex="2">
+    <Label text="Chapas de aço na fila da máquina de corte CNC" GridPane.columnIndex="3" GridPane.rowIndex="2" />
+    <Label fx:id="label_steelSheetsInCNCQueue" text="" GridPane.columnIndex="3" GridPane.rowIndex="3" />
+
+    <IdleCNCCutMachineComponent GridPane.columnIndex="4" GridPane.rowIndex="2">
     </IdleCNCCutMachineComponent>
 
-    <IdleCNCOperatorComponent GridPane.columnIndex="3" GridPane.rowIndex="2">
+    <IdleCNCOperatorComponent GridPane.columnIndex="5" GridPane.rowIndex="2">
     </IdleCNCOperatorComponent>
 
-    <IdleFitterComponent GridPane.columnIndex="4" GridPane.rowIndex="2">
+    <IdleFitterComponent GridPane.columnIndex="0" GridPane.rowIndex="4">
     </IdleFitterComponent>
 
-    <IdleWelderComponent GridPane.columnIndex="5" GridPane.rowIndex="2">
+    <IdleWelderComponent GridPane.columnIndex="1" GridPane.rowIndex="4">
     </IdleWelderComponent>
 
 </GridPane>

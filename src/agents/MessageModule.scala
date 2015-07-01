@@ -21,11 +21,15 @@ object MessageModule {
     sender.send(newSheetMsg)
   }
 
-  def receive(receiver: Agent, behaviour: CyclicBehaviour, messageHandling: ACLMessage => Unit) = {
-    val msg = receiver.receive()
-    if (msg != null) {
-      messageHandling(msg)
-    }
-    behaviour.block()
+  def receive(receiver: Agent, expectedMessage : String,  messageHandling: ACLMessage => Unit) = {
+    receiver.addBehaviour(new CyclicBehaviour(){
+      override def action(): Unit = {
+        val msg = myAgent.receive()
+        if (msg != null && msg.getContent == expectedMessage) {
+          messageHandling(msg)
+        }
+        this.block()
+      }
+    })
   }
 }

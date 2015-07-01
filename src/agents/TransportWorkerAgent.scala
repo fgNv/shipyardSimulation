@@ -4,7 +4,6 @@ import domain.AgentType
 import domain.AgentType.AgentType
 import events.EventType
 import events.EventType.EventType
-import jade.core.behaviours.CyclicBehaviour
 import object_graph.CompositionRoot
 
 /**
@@ -16,39 +15,26 @@ class TransportWorkerAgent extends AbstractResourceAgent() {
 
   private var hasSteelSheet = false
 
-  private def AddNewSteelSheetIncomeBehaviour() = {
-    addBehaviour(new CyclicBehaviour() {
-      override def action(): Unit = {
-        MessageModule.receive(myAgent, this, msg => {
-          if (msg.getContent() != "newSteelSheet")
-            return
-
-          changeToWorking()
-          hasSteelSheet = true
-
-          MessageModule.send(myAgent, msg.getSender().getLocalName, "steelSheetDelivered")
-        })
-      }
+  private def AddNewSteelSheetIncomeBehaviour(): Unit = {
+    MessageModule.receive(this, "newSteelSheet", (msg) => {
+      changeToWorking()
+      hasSteelSheet = true
+      MessageModule.send(this, msg.getSender().getLocalName, "steelSheetDelivered")
     })
   }
 
-  private def addSearchCNCMachineAndDeliverSteelSheetBehaviour() = {
-    addBehaviour(new CyclicBehaviour() {
-      override def action()  : Unit = {
-        if(!hasSteelSheet){
-          return
-        }
-
+  private def addSearchCNCMachineAndDeliverSteelSheetBehaviour(): Unit = {
+    AgentsModule.addCyclicBehaviour(this, () => {
+      if (hasSteelSheet) {
         val cutMachineWithAvailability = AgentsModule.getCUTMachineWithAvailability
-
         cutMachineWithAvailability match {
           case Some(a) => {
-            MessageModule.send(myAgent, a, "newSheetToQueue")
-            Thread.sleep(configurationData.transportTimeToCNC )
+            MessageModule.send(this, a, "newSheetToQueue")
+            Thread.sleep(configurationData.transportTimeToCNC)
             changeToIdle()
             hasSteelSheet = false
           }
-          case None => {}
+          case None => ()
         }
       }
     })

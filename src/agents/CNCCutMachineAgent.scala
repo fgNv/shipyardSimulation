@@ -3,9 +3,8 @@ package agents
 import domain.AgentType
 import domain.AgentType.AgentType
 import domain.product.SteelSheet
-import events.EventType
 import events.EventType.EventType
-import jade.core.behaviours.CyclicBehaviour
+import events.{EventDispatcher, EventType}
 import object_graph.CompositionRoot
 
 import scala.collection.mutable.ListBuffer
@@ -18,41 +17,80 @@ class CNCCutMachineAgent extends AbstractResourceAgent() {
     AgentType.CNCCutMachineAgent
   }
 
-  private val configurationData = CompositionRoot.configurationDataFactory.getConfigurationData()
-
-  var steelSheetQueue = new ListBuffer[SteelSheet]
-  val maxQueueCapacity = CompositionRoot.configurationDataFactory.getConfigurationData().cncQueueCapacity
+  private val steelSheetQueue = new ListBuffer[SteelSheet]
+  private val maxQueueCapacity = CompositionRoot.configurationDataFactory.getConfigurationData().cncQueueCapacity
+  private var hasSteelSheetToProcess = false
+  private var hasPiecesToBeMoved = false
 
   def hasAvailabilityInQueue = {
     steelSheetQueue.length < maxQueueCapacity
   }
 
   private def addNewSheetToQueueBehaviour(): Unit = {
-    addBehaviour(new CyclicBehaviour() {
-      override def action(): Unit = {
-        val message = myAgent.receive()
-        if (message == null || message.getContent() != "newSheetToQueue")
-          return
-
-        steelSheetQueue.append(new SteelSheet())
-        changeToWorking()
-      }
+    MessageModule.receive(this, "newSheetToQueue", msg => {
+      steelSheetQueue.append(new SteelSheet())
+      EventDispatcher.Dispatch(EventType.SteelSheetAddedToCNCQueue)
     })
   }
 
-  private def addProcessSteelSheetBehaviour(): Unit = {
-    addBehaviour(new CyclicBehaviour() {
-      override def action(): Unit = {
-        if(steelSheetQueue.length == 0)
-          return
+  private def addMoveSteelSheetFromQueueToCNCBehaviour(): Unit = {
+    AgentsModule.addCyclicBehaviour(this, () => {
+      if (steelSheetQueue.length > 0 && !hasSteelSheetToProcess && !hasPiecesToBeMoved) {
 
         val cutAuxiliary = AgentsModule.getIdleAgent(AgentType.CutSectorAncillaryAgent)
 
         cutAuxiliary match {
-          case Some(agent) => MessageModule.send(myAgent, agent, "moveSteelSheetToCNC")
-          case None => return
+          case Some(agent) => {
+            changeToWorking()
+            MessageModule.send(this, agent, "moveSteelSheetToCNC")
+            EventDispatcher.Dispatch(EventType.SteelSheetMovedFromCNCQueueToProcess)
+            steelSheetQueue.remove(0)
+            hasSteelSheetToProcess = true
+          }
+          case None => ()
         }
       }
+    })
+  }
+
+  private def addLookForCNCOperatorAndProcessBehaviour(): Unit = {
+    AgentsModule.addCyclicBehaviour(this, () => {
+      if (hasSteelSheetToProcess) {
+        val cncOperator = AgentsModule.getIdleAgent(AgentType.CNCOperatorAgent)
+
+        cncOperator match {
+          case Some(agent) => {
+            MessageModule.send(this, agent, "processSteelSheet")
+          }
+          case None => ()
+        }
+      }
+    })
+  }
+
+  private def addSteelSheetProcessDoneBehaviour(): Unit = {
+    MessageModule.receive(this, "steelSheetProcessDone", (msg) => {
+      hasPiecesToBeMoved = true
+      hasSteelSheetToProcess = false
+    })
+  }
+
+  private def addMovePiecesBehaviour(): Unit = {
+    AgentsModule.addCyclicBehaviour(this, () => {
+      if (hasPiecesToBeMoved) {
+        val cutAncillary = AgentsModule.getIdleAgent(AgentType.CutSectorAncillaryAgent)
+        cutAncillary match {
+          case Some(agent) => MessageModule.send(this, agent, "movePiecesFromCNC")
+          case None => ()
+        }
+      }
+    })
+  }
+
+  private def addReceivePiecesMovedConfirmation(): Unit = {
+    MessageModule.receive(this, "partsMovedFromCNC", (m) => {
+      hasPiecesToBeMoved = false
+      changeToIdle()
     })
   }
 
@@ -66,5 +104,10 @@ class CNCCutMachineAgent extends AbstractResourceAgent() {
     super.setup()
 
     addNewSheetToQueueBehaviour()
+    addMoveSteelSheetFromQueueToCNCBehaviour()
+    addLookForCNCOperatorAndProcessBehaviour()
+    addSteelSheetProcessDoneBehaviour()
+    addMovePiecesBehaviour()
+    addReceivePiecesMovedConfirmation
   }
 }
