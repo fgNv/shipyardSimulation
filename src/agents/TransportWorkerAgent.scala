@@ -29,10 +29,11 @@ class TransportWorkerAgent extends AbstractResourceAgent() {
         val cutMachineWithAvailability = AgentsModule.getCUTMachineWithAvailability
         cutMachineWithAvailability match {
           case Some(a) => {
-            MessageModule.send(this, a, "newSheetToQueue")
-            Thread.sleep(configurationData.transportTimeToCNC)
-            changeToIdle()
-            hasSteelSheet = false
+            AgentsModule.addWakerBehaviour(this, configurationData.transportTimeToCNC, () => {
+              MessageModule.send(this, a.getLocalName, "newSheetToQueue")
+              changeToIdle()
+              hasSteelSheet = false
+            })
           }
           case None => ()
         }

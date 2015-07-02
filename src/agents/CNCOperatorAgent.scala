@@ -2,7 +2,7 @@ package agents
 
 import domain.AgentType
 import domain.AgentType._
-import events.EventType
+import events.{EventDispatcher, EventType}
 import events.EventType.EventType
 import object_graph.CompositionRoot
 
@@ -22,12 +22,14 @@ class CNCOperatorAgent extends AbstractResourceAgent() {
 
   override def createdEvent: EventType = EventType.CNCOperatorCreated
 
-  private def addProcessSteelSheetBehaviour() : Unit = {
-    MessageModule.receive(this,"processSteelSheet", msg =>{
+  private def addProcessSteelSheetBehaviour(): Unit = {
+    MessageModule.receive(this, "processSteelSheet", msg => {
       changeToWorking()
-      Thread.sleep(configuration.cutTime)
-      changeToIdle()
-      MessageModule.send(this,msg.getSender.getLocalName,"steelSheetProcessDone")
+      AgentsModule.addWakerBehaviour(this, configuration.cutTime, () => {
+        changeToIdle()
+        EventDispatcher.Dispatch(EventType.SteelSheetProcessed)
+        MessageModule.send(this, msg.getSender.getLocalName, "steelSheetProcessDone")
+      })
     })
   }
 

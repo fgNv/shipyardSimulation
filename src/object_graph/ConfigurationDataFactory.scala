@@ -11,7 +11,7 @@ object ConfigurationDataFactory {
     val cutTime = 10
     val partsFromSheet = 20
     val timeForMaterialMovingInCNC = 50
-    val cncQueueCapacity = 15
+    val cncQueueCapacity = 3
     val steelSheetCreationInterval = 1000
     val partsForPartialBlock = 5
     val partialBlocksForBlock = 5

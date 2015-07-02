@@ -3,7 +3,7 @@ package agents
 import domain.{ResourceState, AgentType}
 import domain.AgentType.AgentType
 import jade.core.Agent
-import jade.core.behaviours.{TickerBehaviour, CyclicBehaviour}
+import jade.core.behaviours.{WakerBehaviour, TickerBehaviour, CyclicBehaviour}
 import object_graph.CompositionRoot
 
 import scala.collection.mutable.ListBuffer
@@ -19,6 +19,14 @@ object AgentsModule {
 
   def getIdleAgent(agentType: AgentType): Option[AbstractResourceAgent] = {
     agents.find(a => a.getAgentType() == agentType && a.getResourceState() == ResourceState.Idle)
+  }
+
+  def addCyclicBehaviour(agent: Agent, behaviourAction: (Agent) => Unit): Unit = {
+    agent.addBehaviour(new CyclicBehaviour() {
+      override def action(): Unit = {
+        behaviourAction(agent)
+      }
+    })
   }
 
   def addCyclicBehaviour(agent: Agent, behaviourAction: () => Unit): Unit = {
@@ -37,13 +45,33 @@ object AgentsModule {
     })
   }
 
+  def addWakerBehaviour(agent: Agent, interval: Long, behaviourAction: () => Unit): Unit = {
+    agent.addBehaviour(new WakerBehaviour(agent, interval) {
+      override def onWake(): Unit = {
+        behaviourAction()
+      }
+    })
+  }
+
   def getFittersForPartialMounting(): Option[ListBuffer[FitterAgent]] = {
     val agents = AgentsModule.agents
-                  .filter(a => a.getAgentType() == AgentType.FitterAgent && a.getResourceState() == ResourceState.Idle)
-                  .take(configuration.fittersNeededInPartialFitting)
-                  .map(a => asInstanceOf[FitterAgent])
+      .filter(a => a.getAgentType() == AgentType.FitterAgent && a.getResourceState() == ResourceState.Idle)
+      .take(configuration.fittersNeededInPartialFitting)
+      .map(a => asInstanceOf[FitterAgent])
 
-    if(agents.length == configuration.fittersNeededInPartialFitting)
+    if (agents.length == configuration.weldersNeededInPartialFitting)
+      return Some(agents)
+
+    None
+  }
+
+  def getWeldersForPartialMounting(): Option[ListBuffer[WelderAgent]] = {
+    val agents = AgentsModule.agents
+      .filter(a => a.getAgentType() == AgentType.WelderAgent && a.getResourceState() == ResourceState.Idle)
+      .take(configuration.weldersNeededInPartialFitting)
+      .map(a => asInstanceOf[WelderAgent])
+
+    if (agents.length == configuration.weldersNeededInPartialFitting)
       return Some(agents)
 
     None

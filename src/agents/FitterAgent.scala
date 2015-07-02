@@ -22,12 +22,17 @@ class FitterAgent extends AbstractResourceAgent() {
 
   override def createdEvent: EventType = EventType.FitterCreated
 
-  private def addBeginPartialFittingBehaviour() : Unit = {
-    MessageModule.receive(this,"CallingForPartialFitting",(m) =>{
-      changeToWorking()
-      Thread.sleep(configuration.fittingPartialBlockTime)
-      changeToIdle()
-    })
+  private def addBeginPartialFittingBehaviour(): Unit = {
+    MessageModule.receiveCondition(this,
+      (m) => m != null && m.getContent().contains("CallingForPartialFitting|"),
+      (m) => {
+        val currentlyWorkingOnId = MessageModule.getProductId(m)
+        changeToWorking()
+        AgentsModule.addWakerBehaviour(this, configuration.fittingPartialBlockTime, () => {
+          changeToIdle()
+          MessageModule.send(this, m.getSender.getLocalName, "DonePartialFitting|" + currentlyWorkingOnId)
+        })
+      })
   }
 
   override def setup(): Unit = {

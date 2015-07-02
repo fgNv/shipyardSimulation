@@ -8,9 +8,6 @@ import jade.lang.acl.ACLMessage
  * Created by Felipe on 28/06/2015.
  */
 object MessageModule {
-  def send(sender: Agent, receiver: Agent, content: String): Unit = {
-    send(sender, receiver.getLocalName, content)
-  }
 
   def send(sender: Agent, receiverLocalName: String, content: String): Unit = {
     val newSheetMsg = new ACLMessage(ACLMessage.INFORM)
@@ -21,8 +18,20 @@ object MessageModule {
     sender.send(newSheetMsg)
   }
 
-  def receive(receiver: Agent, expectedMessage : String,  messageHandling: ACLMessage => Unit) = {
-    receiver.addBehaviour(new CyclicBehaviour(){
+  def receiveCondition(receiver: Agent, expectedMessageCondition: (ACLMessage) => Boolean, messageHandling: ACLMessage => Unit): Unit = {
+    receiver.addBehaviour(new CyclicBehaviour() {
+      override def action(): Unit = {
+        val msg = myAgent.receive()
+        if (msg != null && expectedMessageCondition(msg)) {
+          messageHandling(msg)
+        }
+        this.block()
+      }
+    })
+  }
+
+  def receive(receiver: Agent, expectedMessage: String, messageHandling: ACLMessage => Unit): Unit = {
+    receiver.addBehaviour(new CyclicBehaviour() {
       override def action(): Unit = {
         val msg = myAgent.receive()
         if (msg != null && msg.getContent == expectedMessage) {
@@ -32,4 +41,9 @@ object MessageModule {
       }
     })
   }
+
+  def getProductId(message: ACLMessage) = {
+    message.getContent().split("|")(1).toInt
+  }
+
 }

@@ -21,6 +21,9 @@ class CNCCutMachineAgent extends AbstractResourceAgent() {
   private val maxQueueCapacity = CompositionRoot.configurationDataFactory.getConfigurationData().cncQueueCapacity
   private var hasSteelSheetToProcess = false
   private var hasPiecesToBeMoved = false
+  private var tryingToMoveFromQueueFromCNC = false
+  private var tryingToProcess = false
+  private var tryingToMovePiecesFromCNC = false
 
   def hasAvailabilityInQueue = {
     steelSheetQueue.length < maxQueueCapacity
@@ -35,19 +38,20 @@ class CNCCutMachineAgent extends AbstractResourceAgent() {
 
   private def addMoveSteelSheetFromQueueToCNCBehaviour(): Unit = {
     AgentsModule.addCyclicBehaviour(this, () => {
-      if (steelSheetQueue.length > 0 && !hasSteelSheetToProcess && !hasPiecesToBeMoved) {
-
+      if (steelSheetQueue.length > 0 && !hasSteelSheetToProcess && !hasPiecesToBeMoved && !tryingToMoveFromQueueFromCNC) {
+        tryingToMoveFromQueueFromCNC = true
         val cutAuxiliary = AgentsModule.getIdleAgent(AgentType.CutSectorAncillaryAgent)
 
         cutAuxiliary match {
           case Some(agent) => {
             changeToWorking()
-            MessageModule.send(this, agent, "moveSteelSheetToCNC")
+            MessageModule.send(this, agent.getLocalName, "moveSteelSheetToCNC")
             EventDispatcher.Dispatch(EventType.SteelSheetMovedFromCNCQueueToProcess)
-            steelSheetQueue.remove(0)
             hasSteelSheetToProcess = true
+            tryingToMoveFromQueueFromCNC = false
+            steelSheetQueue.remove(0)
           }
-          case None => ()
+          case None => tryingToMoveFromQueueFromCNC = false
         }
       }
     })
@@ -55,14 +59,16 @@ class CNCCutMachineAgent extends AbstractResourceAgent() {
 
   private def addLookForCNCOperatorAndProcessBehaviour(): Unit = {
     AgentsModule.addCyclicBehaviour(this, () => {
-      if (hasSteelSheetToProcess) {
+      if (hasSteelSheetToProcess && !tryingToProcess) {
+        tryingToProcess = true
         val cncOperator = AgentsModule.getIdleAgent(AgentType.CNCOperatorAgent)
 
         cncOperator match {
           case Some(agent) => {
-            MessageModule.send(this, agent, "processSteelSheet")
+            MessageModule.send(this, agent.getLocalName, "processSteelSheet")
+            tryingToProcess = false
           }
-          case None => ()
+          case None => tryingToProcess = false
         }
       }
     })
@@ -77,11 +83,16 @@ class CNCCutMachineAgent extends AbstractResourceAgent() {
 
   private def addMovePiecesBehaviour(): Unit = {
     AgentsModule.addCyclicBehaviour(this, () => {
-      if (hasPiecesToBeMoved) {
+      if (hasPiecesToBeMoved && !tryingToMovePiecesFromCNC) {
+        tryingToMovePiecesFromCNC = true
         val cutAncillary = AgentsModule.getIdleAgent(AgentType.CutSectorAncillaryAgent)
         cutAncillary match {
-          case Some(agent) => MessageModule.send(this, agent, "movePiecesFromCNC")
-          case None => ()
+          case Some(agent) => {
+            MessageModule.send(this, agent.getLocalName, "movePiecesFromCNC")
+            tryingToMovePiecesFromCNC = false
+            EventDispatcher.Dispatch(EventType.PiecesMovedFromCNC)
+          }
+          case None => tryingToMovePiecesFromCNC = false
         }
       }
     })

@@ -15,7 +15,7 @@ class MainView extends Application {
     val resource = getClass.getResource("main_view.fxml")
     val root: Parent = FXMLLoader.load(resource)
 
-    primaryStage.setScene(new Scene(root, 300, 300))
+    primaryStage.setScene(new Scene(root, 1000, 300))
     primaryStage.show()
   }
 }

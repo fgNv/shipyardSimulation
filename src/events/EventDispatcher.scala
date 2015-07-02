@@ -10,7 +10,7 @@ import scala.collection.mutable.ListBuffer
  */
 object EventDispatcher {
 
-  var handlers  = new mutable.HashMap[EventType,ListBuffer[() => Unit]]()
+  private val handlers  = new mutable.HashMap[EventType,ListBuffer[() => Unit]]()
 
   EventType.values.foreach(u => handlers.put(u,new ListBuffer[() => Unit]))
 
@@ -19,6 +19,7 @@ object EventDispatcher {
   }
 
   def Dispatch(eventType: EventType): Unit = {
+    println (eventType)
     handlers(eventType).foreach(u => u())
   }
 }

@@ -7,7 +7,9 @@ object EventType extends Enumeration  {
   type EventType = Value
   val SteelSheetCreated,
   SteelSheetTransported,
+  SteelSheetProcessed,
   TransportWorkerIdle,
+  PiecesMovedFromCNC,
   SteelSheetAddedToCNCQueue,
   SteelSheetMovedFromCNCQueueToProcess,
   PartProduced,
@@ -27,5 +29,7 @@ object EventType extends Enumeration  {
   CNCCutMachineCreated,
   FitterCreated,
   TransportWorkerCreated,
+  SheetPlacedInCNC,
+  PartsMovedFromCNC,
   WelderCreated= Value
 }

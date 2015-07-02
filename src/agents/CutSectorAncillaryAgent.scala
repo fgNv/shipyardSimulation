@@ -2,7 +2,7 @@ package agents
 
 import domain.AgentType
 import domain.AgentType._
-import events.EventType
+import events.{EventDispatcher, EventType}
 import events.EventType.EventType
 import object_graph.CompositionRoot
 
@@ -25,18 +25,22 @@ class CutSectorAncillaryAgent extends AbstractResourceAgent() {
   private def addMoveSheetToCNCBehaviour(): Unit = {
     MessageModule.receive(this, "newSheetToQueue", (m) => {
       changeToWorking()
-      Thread.sleep(configurationData.timeForMaterialMovingInCNC)
-      changeToIdle()
-      MessageModule.send(this, m.getSender.getLocalName, "sheetPlacedInCNC")
+      AgentsModule.addWakerBehaviour(this, configurationData.timeForMaterialMovingInCNC, () => {
+        changeToIdle()
+        EventDispatcher.Dispatch(EventType.SheetPlacedInCNC)
+        MessageModule.send(this, m.getSender.getLocalName, "sheetPlacedInCNC")
+      })
     })
   }
 
   private def addMovePiecesFromCNCBehaviour(): Unit = {
     MessageModule.receive(this, "movePiecesFromCNC", (m) => {
       changeToWorking()
-      Thread.sleep(configurationData.timeForMaterialMovingInCNC * configurationData.partsFromSheet)
-      changeToIdle()
-      MessageModule.send(this, m.getSender.getLocalName, "partsMovedFromCNC")
+      AgentsModule.addWakerBehaviour(this, configurationData.timeForMaterialMovingInCNC * configurationData.partsFromSheet, () => {
+        changeToIdle()
+        EventDispatcher.Dispatch(EventType.PartsMovedFromCNC)
+        MessageModule.send(this, m.getSender.getLocalName, "partsMovedFromCNC")
+      })
     })
   }
 

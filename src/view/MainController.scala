@@ -21,11 +21,26 @@ class MainController extends Initializable {
   @FXML
   var label_steelSheetsInCNCQueue : Label = _
 
+  @FXML
+  var label_steelSheetsInCNCProcessing : Label = _
+
+  @FXML
+  var label_partsInCNC : Label = _
+
+  @FXML
+  var label_partsWaitingPartialMounting : Label = _
+
   private var steelSheetsCreated = 0
 
   private var steelSheetsInCNCQueue = 0
 
   private var steelSheetsWaitingTransport = 0
+
+  private var steelSheetsBeingProcessed = 0
+
+  private var partsInCNC = 0
+
+  private var partsWaitingForPartialMounting = 0
 
   override def initialize(url : URL, resourceBundle: ResourceBundle ) : Unit = {
 
@@ -48,7 +63,31 @@ class MainController extends Initializable {
 
     ViewModule.addEventHandler(EventType.SteelSheetMovedFromCNCQueueToProcess,()=>{
       steelSheetsInCNCQueue = steelSheetsInCNCQueue - 1
+      steelSheetsBeingProcessed = steelSheetsBeingProcessed + 1
       label_steelSheetsInCNCQueue.setText(steelSheetsInCNCQueue.toString)
+      label_steelSheetsInCNCProcessing.setText(steelSheetsBeingProcessed.toString)
+    })
+
+    ViewModule.addEventHandler(EventType.SteelSheetProcessed, ()=>{
+      partsInCNC = partsInCNC + 1
+      steelSheetsBeingProcessed = steelSheetsBeingProcessed - 1
+      label_steelSheetsInCNCProcessing.setText(steelSheetsBeingProcessed.toString)
+      label_partsInCNC.setText(partsInCNC.toString)
+    })
+
+
+    ViewModule.addEventHandler(EventType.SteelSheetProcessed, ()=>{
+      partsInCNC = partsInCNC + 1
+      steelSheetsBeingProcessed = steelSheetsBeingProcessed - 1
+      label_steelSheetsInCNCProcessing.setText(steelSheetsBeingProcessed.toString)
+      label_partsInCNC.setText(partsInCNC.toString)
+    })
+
+    ViewModule.addEventHandler(EventType.PiecesMovedFromCNC, () =>{
+      partsWaitingForPartialMounting = partsWaitingForPartialMounting + 1
+      label_partsWaitingPartialMounting.setText(partsWaitingForPartialMounting.toString)
+      partsInCNC = partsInCNC - 1
+      label_partsInCNC.setText(partsInCNC.toString)
     })
   }
 }
