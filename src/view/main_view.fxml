@@ -1,55 +1,79 @@
 <?import javafx.scene.layout.GridPane?>
 <?import view.components.*?>
 <?import javafx.scene.control.Label?>
+
+<?import java.net.URL?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
 <GridPane fx:controller="view.MainController"
           xmlns:fx="http://javafx.com/fxml" alignment="center" hgap="10" vgap="10">
 
-    <GridPane GridPane.columnIndex="0" GridPane.rowIndex="0">
-        <Label text="Total de chapas de aço entregues" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
-        <Label fx:id="label_steelSheetsDelivered" text="" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
-    </GridPane>
+    <stylesheets>
+        <URL value="@styles.css"/>
+    </stylesheets>
 
-    <GridPane GridPane.columnIndex="1" GridPane.rowIndex="0">
-        <Label text="Chapas de aço aguardando transporte" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
-        <Label fx:id="label_steelSheetsWaitingTransport" text="" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
-    </GridPane>
+    <VBox styleClass="vBox">
+        <VBox styleClass="vBox">
+            <Label styleClass="title">
+                Processo de corte
+            </Label>
+            <HBox styleClass="hBox">
+                <VBox styleClass="vBox">
+                    <Label styleClass="label" text="Total de chapas de aço entregues"/>
+                    <Label styleClass="value" fx:id="label_steelSheetsDelivered" text=""/>
+                </VBox>
 
-    <GridPane GridPane.columnIndex="2" GridPane.rowIndex="0">
-        <Label text="Chapas de aço na fila da máquina de corte CNC" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
-        <Label fx:id="label_steelSheetsInCNCQueue" text="" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
-    </GridPane>
+                <VBox styleClass="vBox">
+                    <Label styleClass="label" text="Chapas de aço aguardando transporte"/>
+                    <Label styleClass="value" fx:id="label_steelSheetsWaitingTransport" text=""/>
+                </VBox>
 
-    <GridPane GridPane.columnIndex="3" GridPane.rowIndex="0">
-        <Label text="Chapas sendo processadas" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
-        <Label fx:id="label_steelSheetsInCNCProcessing" text="" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
-    </GridPane>
+                <VBox styleClass="vBox">
+                    <Label styleClass="label" text="Chapas de aço na fila da máquina de corte CNC"/>
+                    <Label styleClass="value" fx:id="label_steelSheetsInCNCQueue" text=""/>
+                </VBox>
 
-    <GridPane GridPane.columnIndex="4" GridPane.rowIndex="0">
-        <Label text="Peças na máquina CNC" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
-        <Label fx:id="label_partsInCNC" text="" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
-    </GridPane>
+                <VBox styleClass="vBox">
+                    <Label styleClass="label" text="Chapas sendo processadas"/>
+                    <Label styleClass="value" fx:id="label_steelSheetsInCNCProcessing" text=""/>
+                </VBox>
 
-    <GridPane GridPane.columnIndex="5" GridPane.rowIndex="0">
-        <Label text="Peças aguardando sub-montagem" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
-        <Label fx:id="label_partsWaitingPartialMounting" text="" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
-    </GridPane>
+                <VBox styleClass="vBox">
+                    <Label styleClass="label" text="Peças na máquina CNC"/>
+                    <Label styleClass="value" fx:id="label_partsInCNC" text=""/>
+                </VBox>
+            </HBox>
+        </VBox>
+        <VBox styleClass="vBox">
+            <Label styleClass="title">Processo de sub-montagem</Label>
+            <HBox styleClass="hBox">
+                <VBox styleClass="vBox">
+                    <Label styleClass="label" text="Peças aguardando sub-montagem"/>
+                    <Label styleClass="value" fx:id="label_partsWaitingPartialMounting" text=""/>
+                </VBox>
+            </HBox>
+        </VBox>
+        <VBox styleClass="vBox">
+            <Label styleClass="title">Status de alocação dos recursos</Label>
+            <HBox styleClass="hBox">
+                <IdleTransportWorkerComponent GridPane.columnIndex="0" GridPane.rowIndex="2">
+                </IdleTransportWorkerComponent>
 
-    <IdleTransportWorkerComponent GridPane.columnIndex="0" GridPane.rowIndex="1">
-    </IdleTransportWorkerComponent>
+                <IdleCutSectorAncillaryComponent GridPane.columnIndex="1" GridPane.rowIndex="2">
+                </IdleCutSectorAncillaryComponent>
 
-    <IdleCutSectorAncillaryComponent GridPane.columnIndex="1" GridPane.rowIndex="1">
-    </IdleCutSectorAncillaryComponent>
+                <IdleCNCCutMachineComponent GridPane.columnIndex="2" GridPane.rowIndex="2">
+                </IdleCNCCutMachineComponent>
 
-    <IdleCNCCutMachineComponent GridPane.columnIndex="3" GridPane.rowIndex="1">
-    </IdleCNCCutMachineComponent>
+                <IdleCNCOperatorComponent GridPane.columnIndex="3" GridPane.rowIndex="2">
+                </IdleCNCOperatorComponent>
 
-    <IdleCNCOperatorComponent GridPane.columnIndex="4" GridPane.rowIndex="1">
-    </IdleCNCOperatorComponent>
+                <IdleFitterComponent GridPane.columnIndex="4" GridPane.rowIndex="2">
+                </IdleFitterComponent>
 
-    <IdleFitterComponent GridPane.columnIndex="0" GridPane.rowIndex="2">
-    </IdleFitterComponent>
-
-    <IdleWelderComponent GridPane.columnIndex="1" GridPane.rowIndex="2">
-    </IdleWelderComponent>
-
+                <IdleWelderComponent GridPane.columnIndex="5" GridPane.rowIndex="2">
+                </IdleWelderComponent>
+            </HBox>
+        </VBox>
+    </VBox>
 </GridPane>

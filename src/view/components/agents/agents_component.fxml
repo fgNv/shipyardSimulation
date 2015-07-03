@@ -4,15 +4,19 @@
     <GridPane>
         <Label GridPane.columnIndex="0"
                GridPane.rowIndex="0"
+               styleClass="label"
                fx:id="label_idleAgentsTitle" />
         <Label GridPane.columnIndex="0"
                GridPane.rowIndex="1"
+               styleClass="value"
                fx:id="label_idleAgentsCounter"  />
         <Label GridPane.columnIndex="0"
                GridPane.rowIndex="2"
+               styleClass="label"
                fx:id="label_workingAgentsTitle" />
         <Label GridPane.columnIndex="0"
                GridPane.rowIndex="3"
+               styleClass="value"
                fx:id="label_workingAgentsCounter" />
     </GridPane>
 </fx:root>

@@ -1,0 +1,25 @@
+.label{
+    -fx-font-size: 13px;
+}
+
+.value{
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+}
+
+.title{
+    -fx-font-size: 15px;
+    -fx-font-weight: bold;
+}
+
+.vBox{
+ -fx-padding: 4;
+ -fx-spacing: 4;
+ }
+
+.hBox{
+  -fx-padding: 2;
+  -fx-spacing: 2;
+  -fx-hgap: 10;
+  -fx-vgap: 10;
+ }
