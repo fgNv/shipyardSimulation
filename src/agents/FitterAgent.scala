@@ -28,10 +28,10 @@ class FitterAgent extends AbstractResourceAgent() {
       (m) => {
         val currentlyWorkingOnId = MessageModule.getProductId(m)
         changeToWorking()
-        AgentsModule.addWakerBehaviour(this, configuration.fittingPartialBlockTime, () => {
-          changeToIdle()
-          MessageModule.send(this, m.getSender.getLocalName, "DonePartialFitting|" + currentlyWorkingOnId)
-        })
+        doWait(configuration.fittingPartialBlockTime)
+        changeToIdle()
+        MessageModule.send(this, m.getSender.getLocalName, "DonePartialFitting|" + currentlyWorkingOnId)
+
       })
   }
 

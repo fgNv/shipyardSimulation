@@ -7,33 +7,33 @@ import domain.AgentType.AgentType
  */
 class ConfigurationData(_transportTimeToCNC: Long,
                         _cutTime: Long,
-                        _partsFromSheet: Int,
+                        _partsFromSheet: Long,
                         _timeForMaterialMovingInCNC: Long,
-                        _cncQueueCapacity: Int,
+                        _cncQueueCapacity: Long,
                         _steelSheetCreationInterval: Long,
-                        _partsForPartialBlock: Int,
-                        _partialBlocksForBlock: Int,
-                        _blocksForHull: Int,
+                        _partsForPartialBlock: Long,
+                        _partialBlocksForBlock: Long,
+                        _blocksForHull: Long,
                         _fittingPartialBlockTime: Long,
                         _weldingPartialBlockTime: Long,
                         _fittingBlockTime: Long,
                         _weldingBlockTime: Long,
                         _fittingHullTime: Long,
                         _weldingHullTime: Long,
-                        _fittersNeededInPartialFitting: Int,
-                        _weldersNeededInPartialFitting: Int,
-                        _fittersNeededInFitting: Int,
-                        _weldersNeededInFitting: Int,
-                        _fittersNeededInEdification: Int,
-                        _weldersNeededInEdification: Int,
-                        _transportWorkerAgentQuantity : Int,
-                        _cNCOperatorAgentQuantity : Int,
-                        _cutSectorAncillaryAgentQuantity : Int,
-                        _cNCCutMachineAgentQuantity : Int,
-                        _fitterAgentQuantity : Int,
-                        _welderAgentQuantity : Int) {
+                        _fittersNeededInPartialFitting: Long,
+                        _weldersNeededInPartialFitting: Long,
+                        _fittersNeededInFitting: Long,
+                        _weldersNeededInFitting: Long,
+                        _fittersNeededInEdification: Long,
+                        _weldersNeededInEdification: Long,
+                        _transportWorkerAgentQuantity : Long,
+                        _cNCOperatorAgentQuantity : Long,
+                        _cutSectorAncillaryAgentQuantity : Long,
+                        _cNCCutMachineAgentQuantity : Long,
+                        _fitterAgentQuantity : Long,
+                        _welderAgentQuantity : Long) {
 
-  def getResourceQuantity(agentType: AgentType) : Int = {
+  def getResourceQuantity(agentType: AgentType) : Long = {
     agentType match {
       case AgentType.CNCCutMachineAgent => _cNCCutMachineAgentQuantity
       case AgentType.CNCOperatorAgent => _cNCOperatorAgentQuantity

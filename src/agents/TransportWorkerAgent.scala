@@ -2,24 +2,19 @@ package agents
 
 import domain.AgentType
 import domain.AgentType.AgentType
-import events.EventType
 import events.EventType.EventType
-import object_graph.CompositionRoot
+import events.{EventDispatcher, EventType}
 
 /**
  * Created by Felipe on 19/06/2015.
  */
 class TransportWorkerAgent extends AbstractResourceAgent() {
 
-  private val configurationData = CompositionRoot.configurationDataFactory.getConfigurationData()
-
-  private var hasSteelSheet = false
+  var hasSteelSheet = false
 
   private def AddNewSteelSheetIncomeBehaviour(): Unit = {
     MessageModule.receive(this, "newSteelSheet", (msg) => {
-      changeToWorking()
       hasSteelSheet = true
-      MessageModule.send(this, msg.getSender().getLocalName, "steelSheetDelivered")
     })
   }
 
@@ -29,11 +24,12 @@ class TransportWorkerAgent extends AbstractResourceAgent() {
         val cutMachineWithAvailability = AgentsModule.getCUTMachineWithAvailability
         cutMachineWithAvailability match {
           case Some(a) => {
-            AgentsModule.addWakerBehaviour(this, configurationData.transportTimeToCNC, () => {
-              MessageModule.send(this, a.getLocalName, "newSheetToQueue")
-              changeToIdle()
-              hasSteelSheet = false
-            })
+            changeToWorking()
+            doWait(configurationData.transportTimeToCNC)
+            MessageModule.send(this, a.getLocalName, "newSheetToQueue")
+            EventDispatcher.Dispatch(EventType.SteelSheetTransported)
+            changeToIdle()
+            hasSteelSheet = false
           }
           case None => ()
         }

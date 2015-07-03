@@ -28,10 +28,9 @@ class WelderAgent extends AbstractResourceAgent() {
       (m) => {
         val currentlyWorkingOnId = MessageModule.getProductId(m)
         changeToWorking()
-        AgentsModule.addWakerBehaviour(this, configuration.weldingPartialBlockTime, () => {
-          changeToIdle()
-          MessageModule.send(this, m.getSender.getLocalName, "DonePartialWelding|" + currentlyWorkingOnId)
-        })
+        doWait(configuration.weldingPartialBlockTime)
+        changeToIdle()
+        MessageModule.send(this, m.getSender.getLocalName, "DonePartialWelding|" + currentlyWorkingOnId)
       })
   }
 

@@ -69,21 +69,16 @@ class MainController extends Initializable {
     })
 
     ViewModule.addEventHandler(EventType.SteelSheetProcessed, ()=>{
-      partsInCNC = partsInCNC + 1
       steelSheetsBeingProcessed = steelSheetsBeingProcessed - 1
       label_steelSheetsInCNCProcessing.setText(steelSheetsBeingProcessed.toString)
+    })
+
+    ViewModule.addEventHandler(EventType.PartProduced, () => {
+      partsInCNC = partsInCNC + 1
       label_partsInCNC.setText(partsInCNC.toString)
     })
 
-
-    ViewModule.addEventHandler(EventType.SteelSheetProcessed, ()=>{
-      partsInCNC = partsInCNC + 1
-      steelSheetsBeingProcessed = steelSheetsBeingProcessed - 1
-      label_steelSheetsInCNCProcessing.setText(steelSheetsBeingProcessed.toString)
-      label_partsInCNC.setText(partsInCNC.toString)
-    })
-
-    ViewModule.addEventHandler(EventType.PiecesMovedFromCNC, () =>{
+    ViewModule.addEventHandler(EventType.PieceMovedFromCNC, () =>{
       partsWaitingForPartialMounting = partsWaitingForPartialMounting + 1
       label_partsWaitingPartialMounting.setText(partsWaitingForPartialMounting.toString)
       partsInCNC = partsInCNC - 1

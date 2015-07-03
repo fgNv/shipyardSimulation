@@ -21,6 +21,12 @@ object AgentsModule {
     agents.find(a => a.getAgentType() == agentType && a.getResourceState() == ResourceState.Idle)
   }
 
+  def getAvailableTransportWorker() : Option[TransportWorkerAgent] = {
+    agents.filter(a => a.getAgentType() == AgentType.TransportWorkerAgent)
+          .map(a => a.asInstanceOf[TransportWorkerAgent])
+          .find(a => !a.hasSteelSheet)
+  }
+
   def addCyclicBehaviour(agent: Agent, behaviourAction: (Agent) => Unit): Unit = {
     agent.addBehaviour(new CyclicBehaviour() {
       override def action(): Unit = {
@@ -53,34 +59,32 @@ object AgentsModule {
     })
   }
 
-  def getFittersForPartialMounting(): Option[ListBuffer[FitterAgent]] = {
+  private def getWorkersForActivity[A](agentType: AgentType, neededQuantity: Long): Option[ListBuffer[A]] = {
     val agents = AgentsModule.agents
-      .filter(a => a.getAgentType() == AgentType.FitterAgent && a.getResourceState() == ResourceState.Idle)
-      .take(configuration.fittersNeededInPartialFitting)
-      .map(a => asInstanceOf[FitterAgent])
+      .filter(a => a.getAgentType() == agentType && a.getResourceState() == ResourceState.Idle)
+      .take(neededQuantity.toInt)
+      .map(a => a.asInstanceOf[A])
 
-    if (agents.length == configuration.weldersNeededInPartialFitting)
+    if (agents.length == neededQuantity)
       return Some(agents)
 
     None
   }
 
+  def getFittersForPartialMounting(): Option[ListBuffer[FitterAgent]] = {
+    getWorkersForActivity[FitterAgent](AgentType.FitterAgent, configuration.fittersNeededInPartialFitting)
+  }
+
   def getWeldersForPartialMounting(): Option[ListBuffer[WelderAgent]] = {
-    val agents = AgentsModule.agents
-      .filter(a => a.getAgentType() == AgentType.WelderAgent && a.getResourceState() == ResourceState.Idle)
-      .take(configuration.weldersNeededInPartialFitting)
-      .map(a => asInstanceOf[WelderAgent])
-
-    if (agents.length == configuration.weldersNeededInPartialFitting)
-      return Some(agents)
-
-    None
+    getWorkersForActivity[WelderAgent](AgentType.WelderAgent, configuration.weldersNeededInPartialFitting)
   }
 
   def getCUTMachineWithAvailability() = {
     AgentsModule.agents
       .filter(a => a.getAgentType() == AgentType.CNCCutMachineAgent)
       .map(a => a.asInstanceOf[CNCCutMachineAgent])
+      .sortWith(_.getItemsInQueueCount < _.getItemsInQueueCount)
       .find(a => a.hasAvailabilityInQueue)
+
   }
 }

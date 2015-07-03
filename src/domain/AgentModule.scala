@@ -21,7 +21,7 @@ object AgentModule {
   private def buildAgentCreationString(agentType : AgentType, configurationData: ConfigurationData) : String = {
     val quantity = configurationData.getResourceQuantity(agentType)
     val agentClassName = getAgentClasseName(agentType)
-    (0 until quantity).map(u => agentClassName + "|" + u + ":" + agentClassName + ";")
+    (0 until quantity.toInt).map(u => agentClassName + "|" + u + ":" + agentClassName + ";")
                       .reduce((acc, i) => acc + i)
   }
 

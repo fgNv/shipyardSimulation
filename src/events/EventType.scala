@@ -9,7 +9,7 @@ object EventType extends Enumeration  {
   SteelSheetTransported,
   SteelSheetProcessed,
   TransportWorkerIdle,
-  PiecesMovedFromCNC,
+  PieceMovedFromCNC,
   SteelSheetAddedToCNCQueue,
   SteelSheetMovedFromCNCQueueToProcess,
   PartProduced,

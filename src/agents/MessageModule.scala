@@ -10,7 +10,8 @@ import jade.lang.acl.ACLMessage
 object MessageModule {
 
   def send(sender: Agent, receiverLocalName: String, content: String): Unit = {
-    val newSheetMsg = new ACLMessage(ACLMessage.INFORM)
+    val newSheetMsg = new ACLMessage(ACLMessage.REQUEST)
+    println("message|" + content + " from " + sender.getLocalName  + " to " + receiverLocalName)
     newSheetMsg.addReceiver(new AID(receiverLocalName, AID.ISLOCALNAME))
     newSheetMsg.setLanguage("English")
     newSheetMsg.setOntology("Event")

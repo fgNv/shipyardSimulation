@@ -16,15 +16,17 @@ import scala.collection.mutable.ListBuffer
 abstract class AbstractResourceAgent extends Agent() {
   var logEntries = new ListBuffer[ActivityLogItem]
 
+  val configurationData = CompositionRoot.configurationDataFactory.getConfigurationData()
+
   def getResourceState(): ResourceState = {
     logEntries.last.state
   }
 
-  def activeEvent : EventType
+  def activeEvent: EventType
 
-  def idleEvent : EventType
+  def idleEvent: EventType
 
-  def createdEvent : EventType
+  def createdEvent: EventType
 
   def changeToWorking() = {
     logEntries.append(new ActivityLogItem(CompositionRoot.timer.getCurrentTime(), ResourceState.Working))

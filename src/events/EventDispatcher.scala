@@ -10,16 +10,17 @@ import scala.collection.mutable.ListBuffer
  */
 object EventDispatcher {
 
-  private val handlers  = new mutable.HashMap[EventType,ListBuffer[() => Unit]]()
+  private val handlers = new mutable.HashMap[EventType, ListBuffer[() => Unit]]()
 
-  EventType.values.foreach(u => handlers.put(u,new ListBuffer[() => Unit]))
+  EventType.values.foreach(u => handlers.put(u, new ListBuffer[() => Unit]))
 
   def RegisterEventHandler(eventType: EventType, handler: () => Unit): Unit = {
     handlers(eventType).append(handler)
   }
 
   def Dispatch(eventType: EventType): Unit = {
-    println (eventType)
+    if (eventType != EventType.PieceMovedFromCNC)
+      println("event|" + eventType)
     handlers(eventType).foreach(u => u())
   }
 }

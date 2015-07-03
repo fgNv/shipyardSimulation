@@ -1,6 +1,5 @@
 package agents
 
-import domain.AgentType
 import domain.product._
 import events.{EventDispatcher, EventType}
 import jade.core.Agent
@@ -16,7 +15,7 @@ class DeliveryAgent extends Agent {
 
   val configs = CompositionRoot.configurationDataFactory.getConfigurationData()
 
-  private val steelSheets = new ListBuffer[SteelSheet]
+  private var steelSheets = new ListBuffer[SteelSheet]
   private val parts = new ListBuffer[ProcessedPart]
   private val partialBlocks = new ListBuffer[PartialBlock]
   private val blocks = new ListBuffer[Block]
@@ -43,29 +42,16 @@ class DeliveryAgent extends Agent {
 
   private def addSendSteelSheetToTransportWorkerBehaviour() = {
     AgentsModule.addCyclicBehaviour(this, () => {
-      val idleTransportAgent = AgentsModule.getIdleAgent(AgentType.TransportWorkerAgent)
-      idleTransportAgent match {
-        case Some(transportAgent) => MessageModule.send(this, transportAgent.getLocalName, "newSteelSheet")
-        case None => ()
-      }
-    })
-  }
-
-  private def addSteelSheetDeliveredConfirmationBehaviour() = {
-    MessageModule.receive(this, "steelSheetDelivered", msg => {
       if (steelSheets.length > 0) {
-        steelSheets.remove(0)
-        EventDispatcher.Dispatch(EventType.SteelSheetTransported)
+        val idleTransportAgent = AgentsModule.getAvailableTransportWorker()
+        idleTransportAgent match {
+          case Some(transportAgent) => {
+            MessageModule.send(this, transportAgent.getLocalName, "newSteelSheet")
+            steelSheets.remove(0)
+          }
+          case None => ()
+        }
       }
-    })
-  }
-
-  private def addReceivePiecesDoneNotificationBehaviour(): Unit = {
-    MessageModule.receive(this, "partsFromSheetProduced", (m) => {
-      (0 until configs.partsFromSheet).foreach(u => {
-        EventDispatcher.Dispatch(EventType.PartProduced)
-        parts.append(new ProcessedPart)
-      })
     })
   }
 
@@ -104,7 +90,7 @@ class DeliveryAgent extends Agent {
       .filter { case (k, v) => v == configs.fittersNeededInPartialFitting }
       .map { case (k, v) => k }
       .foreach((k) => {
-      (0 until configs.partsForPartialBlock).foreach(u => parts.remove(0))
+      (0 until configs.partsForPartialBlock.toInt).foreach(u => parts.remove(0))
       partialFittingWorkControl.remove(k)
       partialBlocksWaitingWelding = partialBlocksWaitingWelding + 1
     })
@@ -140,11 +126,10 @@ class DeliveryAgent extends Agent {
     super.setup()
     addSteelSheetCreationBehaviour()
     addSendSteelSheetToTransportWorkerBehaviour()
-    addSteelSheetDeliveredConfirmationBehaviour()
-    addReceivePiecesDoneNotificationBehaviour()
     addDispatchPartialMountingBehaviour()
     addReceivePartialBlockFittingDoneConfirmation()
     addPartialBlockFittingVerificationBehaviour()
     addDispatchPartialBlockWeldingBehaviour()
+    addReceivePartialBlockWeldingDoneConfirmation()
   }
 }
